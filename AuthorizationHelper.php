@@ -19,6 +19,11 @@ class AADSSO_AuthorizationHelper
 	 * @return string The authorization URL.
 	 */
 	public static function get_authorization_url( $settings, $antiforgery_id ) {
+
+		if( preg_match("/^http(s?):\/\//i", $settings->redirect_uri) == 0 ){
+			$settings->redirect_uri = get_site_url().$settings->redirect_uri;
+		}
+
 		$auth_url = $settings->authorization_endpoint . '?'
 		 . http_build_query( array(
 					'response_type' => 'code',
@@ -44,6 +49,10 @@ class AADSSO_AuthorizationHelper
 	 */
 	public static function get_access_token( $code, $settings ) {
 
+		if( preg_match("/^http(s?):\/\//i", $settings->redirect_uri) == 0 ){
+			$settings->redirect_uri = get_site_url().$settings->redirect_uri;
+		}
+		
 		// Construct the body for the access token request
 		$authentication_request_body = http_build_query(
 			array(
